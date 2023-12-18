@@ -5,16 +5,16 @@ import com.google.gson.annotations.SerializedName
 data class PhraseNetDTO(
     @SerializedName("createdAt")
     val createdAt: String?,
-    @SerializedName("phraseText")
+    @SerializedName("text")
     val phraseText: String?,
-    @SerializedName("phraseId")
+    @SerializedName("id")
     val phraseId: Long?,
-    @SerializedName("phraseImgUrl")
+    @SerializedName("imageUrl")
     val phraseImgUrl: String?,
-    @SerializedName("phraseExamples")
+    @SerializedName("examples")
     val phraseExamples: List<String>?,
-    @SerializedName("phraseDefinition")
+    @SerializedName("definition")
     val phraseDefinition: String?,
-    @SerializedName("phraseUserId")
+    @SerializedName("userId")
     val phraseUserId: Long?
 )

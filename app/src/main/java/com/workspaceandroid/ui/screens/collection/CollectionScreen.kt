@@ -78,22 +78,28 @@ fun CollectionScreen(
 ) {
 
     Scaffold(floatingActionButton = {
-        FloatingActionButton(onClick = onFloatingButtonClick,
-            modifier = Modifier.size(icon_size_64)) {
+        FloatingActionButton(
+            onClick = onFloatingButtonClick,
+            modifier = Modifier.size(icon_size_64)
+        ) {
             Icon(imageVector = Icons.Default.Add, contentDescription = "FloatingButton")
         }
     }) { padding ->
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .padding(padding)) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
             ToolbarComponent(
                 modifier = Modifier.padding(start = offset_16, top = offset_16),
                 text = stringResource(R.string.collection_title),
             )
             if (!state.isLoading) {
-                LazyColumn(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(offset_16)) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(offset_16)
+                ) {
                     item {
                         OverviewSection(cardsSize = state.phrases.size)
                         Spacer(modifier = Modifier.height(offset_12))
@@ -168,9 +174,11 @@ fun ExpandableCard(
         Column(Modifier.padding(top = offset_8, start = offset_8, end = offset_8)) {
             Box(modifier = Modifier.noRippleClickable { onCardClick() }) {
                 CardTitle(title = phrase.text)
-                CardArrow(modifier = Modifier.align(Alignment.TopEnd),
+                CardArrow(
+                    modifier = Modifier.align(Alignment.TopEnd),
                     degrees = arrowRotationDegree,
-                    onClick = onCardClick)
+                    onClick = onCardClick
+                )
             }
             ExpandableContent(phrase = phrase, visible = expanded, onRemoveClick)
         }
@@ -195,15 +203,21 @@ fun CardArrow(
 @Composable
 fun CardTitle(title: String) {
     Column {
-        Text(text = title,
+        Text(
+            text = title,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = offset_12, top = offset_12),
             textAlign = TextAlign.Left,
-            style = MaterialTheme.typography.titleMedium)
-        LazyRow(modifier = Modifier.padding(start = offset_12,
-            top = offset_8,
-            bottom = offset_12)) {
+            style = MaterialTheme.typography.titleMedium
+        )
+        LazyRow(
+            modifier = Modifier.padding(
+                start = offset_12,
+                top = offset_8,
+                bottom = offset_12
+            )
+        ) {
 
             items(2) {
                 CustomChipTitle(text = "Finance", color = blue.copy(alpha = 0.4f))
@@ -221,30 +235,43 @@ fun ExpandableContent(
     onRemoveClick: (Long) -> Unit,
 ) {
     val enterTransition = remember {
-        expandVertically(expandFrom = Alignment.Top,
-            animationSpec = tween(EXPANSTION_TRANSITION_DURATION)) + fadeIn(initialAlpha = 0.3f,
-            animationSpec = tween(EXPANSTION_TRANSITION_DURATION))
+        expandVertically(
+            expandFrom = Alignment.Top,
+            animationSpec = tween(EXPANSTION_TRANSITION_DURATION)
+        ) + fadeIn(
+            initialAlpha = 0.3f,
+            animationSpec = tween(EXPANSTION_TRANSITION_DURATION)
+        )
     }
     val exitTransition = remember {
-        shrinkVertically(shrinkTowards = Alignment.Top,
-            animationSpec = tween(EXPANSTION_TRANSITION_DURATION)) + fadeOut(animationSpec = tween(
-            EXPANSTION_TRANSITION_DURATION))
+        shrinkVertically(
+            shrinkTowards = Alignment.Top,
+            animationSpec = tween(EXPANSTION_TRANSITION_DURATION)
+        ) + fadeOut(
+            animationSpec = tween(
+                EXPANSTION_TRANSITION_DURATION
+            )
+        )
     }
 
     AnimatedVisibility(visible = visible, enter = enterTransition, exit = exitTransition) {
         Column {
             Text(phrase.definition)
 
-            Divider(modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = offset_12)
-                .height(width_1),
-                color = light_gray)
+            Divider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = offset_12)
+                    .height(width_1),
+                color = light_gray
+            )
             Text(text = phrase.examples.joinToString(separator = "\n"))
 
-            Divider(modifier = Modifier
-                .fillMaxWidth()
-                .height(width_1), color = light_gray)
+            Divider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(width_1), color = light_gray
+            )
 
             Row {
                 ActionButton(painter = painterResource(R.drawable.ic_edit),
@@ -291,10 +318,12 @@ fun OverviewSection(
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(text = stringResource(R.string.collection_overview), fontWeight = FontWeight.Bold)
         Row(Modifier.padding(top = offset_16)) {
-            Card(modifier = Modifier.weight(1f),
+            Card(
+                modifier = Modifier.weight(1f),
                 colors = CardDefaults.cardColors(containerColor = orange),
                 shape = RoundedCornerShape(radius_16),
-                elevation = CardDefaults.cardElevation(defaultElevation = elevation_4)) {
+                elevation = CardDefaults.cardElevation(defaultElevation = elevation_4)
+            ) {
                 Column(
                     modifier = Modifier.padding(offset_12)
                 ) {
@@ -330,16 +359,21 @@ fun UserPacksContainer() {
 
         var selectedPackIndex by remember { mutableStateOf(-1) }
 
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .padding(offset_16)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(offset_16)
         ) {
-            Text(modifier = Modifier.align(Alignment.TopStart),
+            Text(
+                modifier = Modifier.align(Alignment.TopStart),
                 text = stringResource(R.string.collection_my_packs),
-                fontWeight = FontWeight.Bold)
-            Text(modifier = Modifier.align(Alignment.TopEnd),
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                modifier = Modifier.align(Alignment.TopEnd),
                 text = stringResource(R.string.see_all),
-                fontWeight = FontWeight.Bold)
+                fontWeight = FontWeight.Bold
+            )
         }
 
         LazyRow {
@@ -349,10 +383,14 @@ fun UserPacksContainer() {
                 Card(
                     modifier = Modifier.padding(offset_8),
                     shape = RoundedCornerShape(radius_8),
-                    colors = CardDefaults.cardColors(containerColor = Color(Random.nextInt(255),
-                        Random.nextInt(255),
-                        Random.nextInt(255),
-                        alpha = 30)),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(
+                            Random.nextInt(255),
+                            Random.nextInt(255),
+                            Random.nextInt(255),
+                            alpha = 30
+                        )
+                    ),
                     border = if (itemSelected) BorderStroke(width_2, Color.Red) else null,
                 ) {
                     Column(
@@ -367,9 +405,11 @@ fun UserPacksContainer() {
                             )
 
                     ) {
-                        Text(modifier = Modifier.fillMaxWidth(),
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
                             text = "${Random.nextInt(25)}",
-                            textAlign = TextAlign.Center)
+                            textAlign = TextAlign.Center
+                        )
                         Text(text = "${listCollections[item]}", textAlign = TextAlign.Center)
                     }
                 }
@@ -398,5 +438,25 @@ fun SearchBox(
 @Composable
 @Preview(showBackground = true)
 fun CollectionScreenPreview() {
-    CollectionScreen(navController = rememberNavController())
+//    CollectionScreen(navController = rememberNavController())
+//    CollectionScreen(
+//        state = CollectionContract.State(
+//            phrases = listOf(
+//                Phrase(
+//                    id = 1L,
+//                    createdAt = 1L,
+//                    formattedDate = "formattedDate",
+//                    text = "phrase example",
+//                    imgUrl = "url",
+//                    examples = listOf("example1, example2Here"),
+//                    definition = "definition here",
+//                    isExpanded = false
+//                )
+//            )
+//        ),
+//        onFloatingButtonClick = { /*TODO*/ },
+//        onItemClick = {},
+//        onSearch = {},
+//        onRemoveClick = {}
+//    )
 }

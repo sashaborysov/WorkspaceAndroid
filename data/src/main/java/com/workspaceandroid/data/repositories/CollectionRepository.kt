@@ -12,7 +12,8 @@ class CollectionRepository(
 ): ICollectionRepository {
 
     override suspend fun fetchUserPhrases(): List<Phrase> {
-        return netSource.fetchUserPhrases().run(phrasesNetMapper::fromEntityList)
+        val userPhrases = netSource.fetchUserPhrases()
+        return userPhrases.run(phrasesNetMapper::fromEntityList)
     }
 
     override suspend fun addUserPhrase(phrase: PhraseInput) {
