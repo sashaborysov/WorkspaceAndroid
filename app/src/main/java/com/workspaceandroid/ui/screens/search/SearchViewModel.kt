@@ -12,15 +12,16 @@ import javax.inject.Inject
 class SearchViewModel @Inject constructor(private val collectionInteractor: CollectionInteractor) :
     BaseViewModel<SearchContract.Event, SearchContract.State, SearchContract.Effect>() {
 
-    private val userPhrase = PhraseInput()
+    private val userInputPhrase = PhraseInput()
 
     override fun setInitialState(): SearchContract.State = SearchContract.State().copy(isLoading = true)
 
     override fun handleEvents(event: SearchContract.Event) {
         when (event) {
             is SearchContract.Event.OnPhraseUpdated -> {
-                event.phraseBuilder.invoke(userPhrase)
+                event.phraseBuilder.invoke(userInputPhrase)
                 loadPhrasePrediction()
+                setState { copy(selectedCollectionChip = userInputPhrase.selectedCollectionId) }
             }
             SearchContract.Event.OnSaveButtonClicked -> {
                 addUserPhrase()
@@ -28,16 +29,21 @@ class SearchViewModel @Inject constructor(private val collectionInteractor: Coll
         }
     }
 
-    private fun addUserPhrase() {
+    init {
         viewModelScope.launch {
-            collectionInteractor.addUserPhrase(userPhrase)
+            val fetchedCollections = collectionInteractor.getUserCollections().map { Pair(it.id, it.name) }
+            setState { copy(userCollections = fetchedCollections) }
         }
     }
 
+    private fun addUserPhrase() {
+        viewModelScope.launch { collectionInteractor.addUserPhrase(userInputPhrase) }
+    }
+
     private fun loadPhrasePrediction() {
-        if (userPhrase.text.length > 2) {
+        if (userInputPhrase.text.length > 2) {
             viewModelScope.launch {
-                val predictedPhrase = collectionInteractor.getPhrasePrediction(userPhrase.text)
+                val predictedPhrase = collectionInteractor.getPhrasePrediction(userInputPhrase.text)
                 setState { this.copy(predictedPhrase = predictedPhrase, isLoading = false) }
             }
         }

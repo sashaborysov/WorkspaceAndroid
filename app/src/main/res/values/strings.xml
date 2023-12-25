@@ -62,6 +62,7 @@
     <string name="create_card_example_placeholder">Enter example</string>
     <string name="create_card_translation_label">Translation</string>
     <string name="create_card_translation_placeholder">Enter translation</string>
+    <string name="create_card_collection_label">Collection</string>
     <string name="create_card_save">Save</string>
 
     <string name="no_results">No results</string>

@@ -6,6 +6,8 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -17,10 +19,12 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -102,7 +106,9 @@ fun CollectionScreen(
                         .padding(offset_16)
                 ) {
                     item {
-                        OverviewSection(cardsSize = state.userCollections.size)
+                        OverviewSection(
+                            collectionsCount = state.userCollections.size,
+                            wordsCount = state.userCollections.sumOf { it.phrases.size })
                         Spacer(modifier = Modifier.height(offset_12))
                         UserPacksContainer(
                             state.userCollections,
@@ -315,9 +321,11 @@ fun CustomChipTitle(
     )
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun OverviewSection(
-    cardsSize: Int,
+    collectionsCount: Int,
+    wordsCount: Int,
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(text = stringResource(R.string.collection_overview), fontWeight = FontWeight.Bold)
@@ -331,9 +339,9 @@ fun OverviewSection(
                 Column(
                     modifier = Modifier.padding(offset_12)
                 ) {
-                    Text("Added", color = Color.White) //TODO resources
-                    Text(text = "$cardsSize", color = Color.White, fontWeight = FontWeight.Bold)
-                    Text("cards in collection", color = Color.White)
+                    Text("Всього", color = Color.White) //TODO resources
+                    Text(text = "$collectionsCount", color = Color.White, fontWeight = FontWeight.Bold)
+                    Text(pluralStringResource(R.plurals.collections, collectionsCount), color = Color.White)
                 }
             }
             Spacer(modifier = Modifier.width(offset_12))
@@ -343,10 +351,11 @@ fun OverviewSection(
                 shape = RoundedCornerShape(radius_16),
                 elevation = CardDefaults.cardElevation(defaultElevation = elevation_4)
             ) {
+                val wordsString = pluralStringResource(R.plurals.words, wordsCount)
                 Column(modifier = Modifier.padding(offset_12)) {
-                    Text("Studied", color = Color.White) //TODO resources
-                    Text(text = "5", color = Color.White, fontWeight = FontWeight.Bold)
-                    Text("cards today", color = Color.White)
+                    Text("Всього", color = Color.White) //TODO resources
+                    Text(text = "$wordsCount", color = Color.White, fontWeight = FontWeight.Bold)
+                    Text("$wordsString в колекціях", color = Color.White)
                 }
             }
         }
@@ -388,26 +397,25 @@ fun UserPacksContainer(
                 val itemSelected = selectedCollectionId == collection.id
 
                 Card(
-                    modifier = Modifier.padding(offset_8),
+                    modifier = Modifier.padding(offset_8)
+                        .clickable(
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() }
+                        ) {
+                            selectedCollectionId =
+                                if (selectedCollectionId != collection.id)
+                                    collection.id else -1
+                            onCollectionClick.invoke(collection)
+                        },
                     shape = RoundedCornerShape(radius_8),
                     colors = CardDefaults.cardColors(
                         containerColor = Color(collection.color)
                     ),
                     border = if (itemSelected) BorderStroke(width_2, Color.Red) else null,
+
                 ) {
                     Column(
-                        Modifier
-                            .padding(offset_16)
-                            .selectable(
-                                selected = itemSelected,
-                                onClick = {
-                                    selectedCollectionId =
-                                        if (selectedCollectionId != collection.id)
-                                            collection.id else -1
-                                    onCollectionClick.invoke(collection)
-                                }
-                            )
-
+                        Modifier.padding(offset_16)
                     ) {
                         Text(
                             modifier = Modifier.fillMaxWidth(),
@@ -460,7 +468,7 @@ fun CollectionScreenPreview() {
             userCollections = listOf(
                 UserCollection(
                     id = 1,
-                    color = 3468187,
+                    color = -13401857,
                     name = "Top phrases",
                     description = "top phrases here",
                     phrases = emptyList()

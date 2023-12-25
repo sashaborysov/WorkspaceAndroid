@@ -22,8 +22,10 @@ class SearchContract {
 //    }
 
     data class State(
+        val isLoading: Boolean = false,
         val predictedPhrase: Phrase? = null,
-        val isLoading: Boolean = false
+        val userCollections: List<Pair<Long, String>> = emptyList(),
+        val selectedCollectionChip: Long = -1
     ) : ViewState
 
     sealed class Effect : ViewSideEffect {
