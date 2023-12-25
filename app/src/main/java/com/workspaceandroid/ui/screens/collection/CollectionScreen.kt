@@ -60,7 +60,7 @@ fun CollectionScreen(
         onRemoveClick = { phraseId ->
             viewModel.setEvent(CollectionContract.Event.OnPhraseRemove(phraseId))
         },
-        onCollectionClick = { collection -> viewModel.onCollectionSelected(collection) } )
+        onCollectionClick = { collection -> viewModel.onCollectionSelected(collection) })
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -340,8 +340,15 @@ fun OverviewSection(
                     modifier = Modifier.padding(offset_12)
                 ) {
                     Text("Всього", color = Color.White) //TODO resources
-                    Text(text = "$collectionsCount", color = Color.White, fontWeight = FontWeight.Bold)
-                    Text(pluralStringResource(R.plurals.collections, collectionsCount), color = Color.White)
+                    Text(
+                        text = "$collectionsCount",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        pluralStringResource(R.plurals.collections, collectionsCount),
+                        color = Color.White
+                    )
                 }
             }
             Spacer(modifier = Modifier.width(offset_12))
@@ -397,7 +404,8 @@ fun UserPacksContainer(
                 val itemSelected = selectedCollectionId == collection.id
 
                 Card(
-                    modifier = Modifier.padding(offset_8)
+                    modifier = Modifier
+                        .padding(offset_8)
                         .clickable(
                             indication = null,
                             interactionSource = remember { MutableInteractionSource() }
@@ -413,7 +421,7 @@ fun UserPacksContainer(
                     ),
                     border = if (itemSelected) BorderStroke(width_2, Color.Red) else null,
 
-                ) {
+                    ) {
                     Column(
                         Modifier.padding(offset_16)
                     ) {
@@ -472,6 +480,18 @@ fun CollectionScreenPreview() {
                     name = "Top phrases",
                     description = "top phrases here",
                     phrases = emptyList()
+                )
+            ),
+            selectedPhrases = listOf(
+                Phrase(
+                    id = 1L,
+                    createdAt = 1L,
+                    formattedDate = "formattedDate",
+                    text = "phrase example",
+                    imgUrl = "url",
+                    examples = listOf("example1, example2Here"),
+                    definition = "definition here",
+                    isExpanded = false
                 )
             )
         ),
