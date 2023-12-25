@@ -229,7 +229,7 @@ fun CardTitle(title: String) {
             )
         ) {
 
-            items(2) {
+            items(1) {
                 CustomChipTitle(text = "Finance", color = blue.copy(alpha = 0.4f))
                 Spacer(modifier = Modifier.width(offset_4))
                 CustomChipTitle(text = "Macroeconomics", color = orange.copy(alpha = 0.4f))

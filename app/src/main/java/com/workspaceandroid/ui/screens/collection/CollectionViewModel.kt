@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CollectionViewModel @Inject constructor(
-    private val collectionInteractor: CollectionInteractor
+    private val collectionInteractor: CollectionInteractor,
 ) : BaseViewModel<CollectionContract.Event, CollectionContract.State, CollectionContract.Effect>() {
 
     enum class SortType {
@@ -37,13 +37,13 @@ class CollectionViewModel @Inject constructor(
     }
 
     private fun updateExpandedCards(selectedPhrase: Phrase) {
-//        setState {
-//            val updatedCards = phrases.map {
-//                if (it.id == selectedPhrase.id) it.copy(isExpanded = !it.isExpanded)
-//                else it
-//            }.toMutableList()
-//            copy(phrases = updatedCards)
-//        }
+        setState {
+            val updatedCards = viewState.value.selectedPhrases.map { //TODO refactor
+                if (it.id == selectedPhrase.id) it.copy(isExpanded = !it.isExpanded)
+                else it
+            }.toMutableList()
+            copy(selectedPhrases = updatedCards)
+        }
     }
 
     private fun filterPhrases(searchInput: String) {
@@ -60,7 +60,13 @@ class CollectionViewModel @Inject constructor(
     private fun fetchUserCollection() {
         viewModelScope.launch {
             allCollections = collectionInteractor.getUserCollections()
-            setState { copy(userCollections = allCollections, isLoading = false) }
+            setState {
+                copy(
+                    userCollections = allCollections,
+                    selectedPhrases = allCollections.flatMap { it.phrases },
+                    isLoading = false
+                )
+            }
         }
     }
 
