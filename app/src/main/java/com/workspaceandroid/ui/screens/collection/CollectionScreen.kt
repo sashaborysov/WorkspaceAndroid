@@ -31,6 +31,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.workspaceandroid.R
 import com.workspaceandroid.domain.models.phrase.Phrase
+import com.workspaceandroid.domain.models.phrase.UserCollection
 import com.workspaceandroid.ui.theme.*
 import com.workspaceandroid.ui.widgets.ActionButton
 import com.workspaceandroid.ui.widgets.TextInput
@@ -39,8 +40,6 @@ import com.workspaceandroid.utils.EXPAND_ANIMATION_DURATION
 import com.workspaceandroid.utils.EXPANSTION_TRANSITION_DURATION
 import com.workspaceandroid.utils.noRippleClickable
 import kotlin.random.Random
-
-val listCollections = listOf("All", "Finance", "Top phrases", "Macroeconomics", "My list")
 
 @Composable
 fun CollectionScreen(
@@ -56,7 +55,8 @@ fun CollectionScreen(
         onSearch = { text -> viewModel.setEvent(CollectionContract.Event.OnSearchInput(text)) },
         onRemoveClick = { phraseId ->
             viewModel.setEvent(CollectionContract.Event.OnPhraseRemove(phraseId))
-        })
+        },
+        onCollectionClick = { collection -> viewModel.onCollectionSelected(collection) } )
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -75,6 +75,7 @@ fun CollectionScreen(
     onItemClick: (Phrase) -> Unit,
     onSearch: (String) -> Unit,
     onRemoveClick: (Long) -> Unit,
+    onCollectionClick: (UserCollection) -> Unit,
 ) {
 
     Scaffold(floatingActionButton = {
@@ -101,9 +102,12 @@ fun CollectionScreen(
                         .padding(offset_16)
                 ) {
                     item {
-                        OverviewSection(cardsSize = state.phrases.size)
+                        OverviewSection(cardsSize = state.userCollections.size)
                         Spacer(modifier = Modifier.height(offset_12))
-                        UserPacksContainer()
+                        UserPacksContainer(
+                            state.userCollections,
+                            onCollectionClick = { onCollectionClick(it) }
+                        )
                         Spacer(modifier = Modifier.height(offset_12))
                     }
 
@@ -111,7 +115,7 @@ fun CollectionScreen(
                         SearchBox(onSearch)
                     }
 
-                    items(state.phrases) { phrase ->
+                    items(state.selectedPhrases) { phrase ->
                         ExpandableCard(
                             phrase = phrase,
                             onCardClick = { onItemClick(phrase) },
@@ -350,14 +354,17 @@ fun OverviewSection(
 }
 
 @Composable
-fun UserPacksContainer() {
+fun UserPacksContainer(
+    userCollections: List<UserCollection>,
+    onCollectionClick: (UserCollection) -> Unit,
+) {
     Card(
         shape = RoundedCornerShape(radius_16),
         elevation = CardDefaults.cardElevation(defaultElevation = elevation_4),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
 
-        var selectedPackIndex by remember { mutableStateOf(-1) }
+        var selectedCollectionId by remember { mutableStateOf(-1L) }
 
         Box(
             modifier = Modifier
@@ -377,19 +384,14 @@ fun UserPacksContainer() {
         }
 
         LazyRow {
-            items(4) { item ->
-                val itemSelected = selectedPackIndex == item
+            items(userCollections) { collection ->
+                val itemSelected = selectedCollectionId == collection.id
 
                 Card(
                     modifier = Modifier.padding(offset_8),
                     shape = RoundedCornerShape(radius_8),
                     colors = CardDefaults.cardColors(
-                        containerColor = Color(
-                            Random.nextInt(255),
-                            Random.nextInt(255),
-                            Random.nextInt(255),
-                            alpha = 30
-                        )
+                        containerColor = Color(collection.color)
                     ),
                     border = if (itemSelected) BorderStroke(width_2, Color.Red) else null,
                 ) {
@@ -399,18 +401,20 @@ fun UserPacksContainer() {
                             .selectable(
                                 selected = itemSelected,
                                 onClick = {
-                                    selectedPackIndex = if (selectedPackIndex != item)
-                                        item else -1
+                                    selectedCollectionId =
+                                        if (selectedCollectionId != collection.id)
+                                            collection.id else -1
+                                    onCollectionClick.invoke(collection)
                                 }
                             )
 
                     ) {
                         Text(
                             modifier = Modifier.fillMaxWidth(),
-                            text = "${Random.nextInt(25)}",
+                            text = collection.phrases.size.toString(),
                             textAlign = TextAlign.Center
                         )
-                        Text(text = "${listCollections[item]}", textAlign = TextAlign.Center)
+                        Text(text = collection.name, textAlign = TextAlign.Center)
                     }
                 }
 
@@ -439,8 +443,8 @@ fun SearchBox(
 @Preview(showBackground = true)
 fun CollectionScreenPreview() {
 //    CollectionScreen(navController = rememberNavController())
-//    CollectionScreen(
-//        state = CollectionContract.State(
+    CollectionScreen(
+        state = CollectionContract.State(
 //            phrases = listOf(
 //                Phrase(
 //                    id = 1L,
@@ -453,10 +457,20 @@ fun CollectionScreenPreview() {
 //                    isExpanded = false
 //                )
 //            )
-//        ),
-//        onFloatingButtonClick = { /*TODO*/ },
-//        onItemClick = {},
-//        onSearch = {},
-//        onRemoveClick = {}
-//    )
+            userCollections = listOf(
+                UserCollection(
+                    id = 1,
+                    color = 3468187,
+                    name = "Top phrases",
+                    description = "top phrases here",
+                    phrases = emptyList()
+                )
+            )
+        ),
+        onFloatingButtonClick = { /*TODO*/ },
+        onItemClick = {},
+        onSearch = {},
+        onRemoveClick = {},
+        onCollectionClick = {}
+    )
 }

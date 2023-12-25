@@ -4,6 +4,7 @@ import com.workspaceandroid.base.ViewEvent
 import com.workspaceandroid.base.ViewSideEffect
 import com.workspaceandroid.base.ViewState
 import com.workspaceandroid.domain.models.phrase.Phrase
+import com.workspaceandroid.domain.models.phrase.UserCollection
 
 class CollectionContract {
 
@@ -14,16 +15,18 @@ class CollectionContract {
         data class OnPhraseRemove(val phraseId: Long) : Event()
     }
 
-//    data class State(
-//        val collectionState: CollectionState
-//        val isLoading = true
-//    ) : ViewState
-
     data class State(
-        val phrases: List<Phrase> = emptyList(),
+        val userCollections: List<UserCollection> = emptyList(),
+        val selectedPhrases: List<Phrase> = emptyList(),
+//        val phrases: List<Phrase> = emptyList(),
         val isLoading: Boolean = false
     ) : ViewState
 
+//        data class State(
+//        val collectionState: CollectionState
+//        val isLoading = true
+//    ) : ViewState
+//
 //    sealed class CollectionState {
 //        object Loading : CollectionState()
 //        data class Success(

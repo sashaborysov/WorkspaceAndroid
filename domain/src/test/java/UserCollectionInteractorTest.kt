@@ -12,7 +12,7 @@ import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.whenever
 
 @RunWith(MockitoJUnitRunner::class)
-class CollectionInteractorTest {
+class UserCollectionInteractorTest {
 
     @Mock
     private lateinit var collectionRepository: ICollectionRepository

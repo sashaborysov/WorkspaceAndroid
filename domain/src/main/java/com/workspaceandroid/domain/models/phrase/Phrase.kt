@@ -8,5 +8,6 @@ data class Phrase(
     val imgUrl: String,
     val examples: List<String>,
     val definition: String,
+
     var isExpanded: Boolean
 )

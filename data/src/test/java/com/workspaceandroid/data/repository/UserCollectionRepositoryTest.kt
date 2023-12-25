@@ -15,7 +15,7 @@ import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.whenever
 
 @RunWith(MockitoJUnitRunner::class)
-class CollectionRepositoryTest {
+class UserCollectionRepositoryTest {
 
     @Mock
     lateinit var netSource: IPhrasesNetSource
